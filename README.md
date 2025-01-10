@@ -5,8 +5,13 @@ This repo contains the tools for using a buzzer with Klipper.
 ## Installation
 
 1. Install the buzzer on your GPIO pins.
+    - These buzzers usually have polarity, if not playing correctly check if you didn't swap the GND and GPIO pins!
     - If you are using a Raspberry Pi, you can use PWM and use Rpi.GPIO and skip this.
     - If using other boards without PWM, like the BTT PI v1.2 (Like I am) you can continue.
+        - For BTT Pi, you can refer to this [WIKI](https://github.com/bigtreetech/CB1#40-pin-gpio) to find the correct GPIO pin to use.
+
+![image](https://github.com/user-attachments/assets/e1671abd-5c2f-426b-b0eb-4af76ae402fd)
+
 2. Install `gpiod` and `python3-gpiod` on your system.
 
 ```bash
@@ -33,6 +38,22 @@ verbose: True
 gcode:
     RUN_SHELL_COMMAND CMD=PLAY_TUNE
 ```
+
+6. **(EXTRA)** You can also specify a file to be played instead of randomly picking one:
+```yaml
+[gcode_shell_command PLAY_ONE_PIECE]
+command: /usr/bin/python3 /home/$(whoami)/buzzer/buzzer.py "songs/one piece - we are.txt" &
+timeout: 2.
+verbose: True
+
+[gcode_macro PLAY_ONE_PIECE]
+gcode:
+    RUN_SHELL_COMMAND CMD=PLAY_ONE_PIECE
+```
+
+7. **(EXTRA)** You can append your newly added GCODE Macro at the end of the machine GCODE on your slicer. So everytime a print is finished it will play your tunes.
+![image](https://github.com/user-attachments/assets/ee4f7bb0-3a61-4916-9351-c6b456767cfc)
+
 
 ## Adding songs
 
