@@ -31,7 +31,7 @@ git clone git@github.com:LeandroSQ/klipper-buzzer.git ~/buzzer
 ```yaml
 [gcode_shell_command PLAY_TUNE]
 command: /usr/bin/python3 /home/$(whoami)/buzzer/buzzer.py &
-timeout: 2.
+timeout: 30
 verbose: True
 
 [gcode_macro PLAY_TUNE]
@@ -43,7 +43,7 @@ gcode:
 ```yaml
 [gcode_shell_command PLAY_ONE_PIECE]
 command: /usr/bin/python3 /home/$(whoami)/buzzer/buzzer.py "songs/one piece - we are.txt" &
-timeout: 2.
+timeout: 30
 verbose: True
 
 [gcode_macro PLAY_ONE_PIECE]
