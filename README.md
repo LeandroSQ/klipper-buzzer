@@ -46,6 +46,10 @@ gcode:
     RUN_SHELL_COMMAND CMD=PLAY_ONE_PIECE
 ```
 
+7. **(EXTRA)** You can append your newly added GCODE Macro at the end of the machine GCODE on your slicer. So everytime a print is finished it will play your tunes.
+![image](https://github.com/user-attachments/assets/ee4f7bb0-3a61-4916-9351-c6b456767cfc)
+
+
 ## Adding songs
 
 1. Find a `.mid` file of the song you want to add.
