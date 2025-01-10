@@ -40,7 +40,8 @@ def get_random_melody():
         filename = sys.argv[1]
         print(f"Playing {filename}...")
     else:
-        songs = glob.glob("songs/*.txt")
+        directory = path.dirname(path.realpath(__file__))
+        songs = glob.glob(path.join(directory, "songs", "*.txt"))
         filename = songs[random.randint(0, len(songs) - 1)]
         print(f"Playing {filename}...")
     return parse_melody(filename)
