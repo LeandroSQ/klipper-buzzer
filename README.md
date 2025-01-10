@@ -5,8 +5,13 @@ This repo contains the tools for using a buzzer with Klipper.
 ## Installation
 
 1. Install the buzzer on your GPIO pins.
+    - These buzzers usually have polarity, if not playing correctly check if you didn't swap the GND and GPIO pins!
     - If you are using a Raspberry Pi, you can use PWM and use Rpi.GPIO and skip this.
     - If using other boards without PWM, like the BTT PI v1.2 (Like I am) you can continue.
+        - For BTT Pi, you can refer to this [WIKI](https://github.com/bigtreetech/CB1#40-pin-gpio) to find the correct GPIO pin to use.
+
+![image](https://github.com/user-attachments/assets/e1671abd-5c2f-426b-b0eb-4af76ae402fd)
+
 2. Install `gpiod` and `python3-gpiod` on your system.
 
 ```bash
