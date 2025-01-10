@@ -34,6 +34,18 @@ gcode:
     RUN_SHELL_COMMAND CMD=PLAY_TUNE
 ```
 
+6. **(EXTRA)** You can also specify a file to be played instead of randomly picking one:
+```yaml
+[gcode_shell_command PLAY_ONE_PIECE]
+command: /usr/bin/python3 /home/$(whoami)/buzzer/buzzer.py "songs/one piece - we are.txt" &
+timeout: 2.
+verbose: True
+
+[gcode_macro PLAY_ONE_PIECE]
+gcode:
+    RUN_SHELL_COMMAND CMD=PLAY_ONE_PIECE
+```
+
 ## Adding songs
 
 1. Find a `.mid` file of the song you want to add.
