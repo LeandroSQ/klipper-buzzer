@@ -87,4 +87,3 @@ finally:
     line.set_value(0)  # Make sure the buzzer is off
     line.release()
     chip.close()
-
