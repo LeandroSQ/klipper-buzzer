@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 
-#define VERBOSE
-
 void print(const char* msg, ...);
 
 #endif
