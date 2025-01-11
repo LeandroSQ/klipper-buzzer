@@ -5,6 +5,10 @@ __pycache__/
 
 .DS_Store
 
+.vscode
+dist/
+src/include
+
 # C extensions
 *.so
 
