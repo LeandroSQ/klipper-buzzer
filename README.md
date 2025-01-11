@@ -6,7 +6,7 @@ This repo contains the tools for using a buzzer with Klipper.
 
 ### Installation
 
-This is the **V2 of this project**, it **uses C and LGPIO with software PWM and timers** to play the tunes, the **impact on performance is minimal and the sound quality is same** as the previous version. It does require a bit more setup but it's worth it, as the previous python version hijacks the CPU core to ensure precise timing which can lead to 100% CPU usage on a single core.
+A complete **rewrite**, it **uses C and LGPIO with software PWM and timers** to play the tunes, the **performance impact is minimal while sound quality remains the same** as the previous version. It does require a bit more setup but it's worth it, as the previous python version hijacks the CPU core to ensure precise timing which can lead to 100% CPU usage on a single core.
 
 1. Install the buzzer on your GPIO pins.
     - These buzzers usually have polarity, if not playing correctly check if you didn't swap the GND and GPIO pins!
