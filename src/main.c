@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     // Arguments:
     // <filename> or none
     if (argc > 2) {
-        print("Usage: %s [filename]\n", argv[0]);
+        print_error("Usage: %s [filename]\n", argv[0]);
         return 1;
     }
 
@@ -38,9 +38,10 @@ int main(int argc, char **argv) {
     }
 
     if (filename == NULL || isDirectory) {
-        filename = (char*)getRandomFileInFolder(isDirectory ? filename : SONGS_FOLDER);
+        const char* folder = isDirectory ? filename : SONGS_FOLDER;
+        filename = (char*)getRandomFileInFolder(folder);
         if (filename == NULL) {
-            print("Failed to get random file in folder %s\n", isDirectory ? filename : SONGS_FOLDER);
+            print_error("Failed to get random file in folder %s\n", folder);
             return 1;
         }
 
@@ -52,24 +53,26 @@ int main(int argc, char **argv) {
     // Parse the melody
     Melody* melody = parseMelodyFile(filename);
     if (melody == NULL) {
-        print("Failed to parse melody\n");
+        print_error("Failed to parse melody\n");
         free(filename);
         return 1;
     }
 
 	int handle = lgGpiochipOpen(GPIO_CHIP);
-	if (handle != LG_OKAY) {
+	// lgGpiochipOpen returns a handle >= 0 on success, or a negative error code on failure
+	if (handle < 0) {
         free(filename);
         free(melody->tones);
         free(melody);
-		print("Failed to open GPIO chip\n");
+        
+        check_gpio_device_error(GPIO_CHIP, handle);
 		return 1;
 	} else {
         print("Opened GPIO chip!\n");
     }
 
     if (lgGpioClaimOutput(handle, 0, GPIO_PIN, 0) != LG_OKAY) {
-        print("Failed to claim GPIO\n");
+        print_error("Failed to claim GPIO\n");
     } else {
         print("Claimed GPIO!\n");
 
@@ -97,7 +100,7 @@ int main(int argc, char **argv) {
             const float pwmCycles = durationInSeconds / period;
 
             if (lgTxPwm(handle, GPIO_PIN, frequency, dutyCycle, pwmOffset, pwmCycles) < 0) {
-                print("Failed to transmit PWM\n");
+                print_error("Failed to transmit PWM\n");
             } else {
                 print("Transmitted PWM!\n");
                 while(lgTxBusy(handle, GPIO_PIN, LG_TX_PWM)) {
@@ -112,7 +115,7 @@ int main(int argc, char **argv) {
         free(filename);
         free(melody->tones);
         free(melody);
-		print("Failed to close GPIO chip\n");
+		print_error("Failed to close GPIO chip\n");
 		return 1;
     }
 

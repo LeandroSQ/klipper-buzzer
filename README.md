@@ -31,7 +31,41 @@ cd include/lg
 sudo make install
 ```
 
-4. Clone and build the source code.
+4. Configure GPIO permissions (required for non-root access).
+
+To allow the program to access GPIO devices without running as root, you need to set up proper permissions:
+
+```bash
+# Create a gpio group
+sudo groupadd gpio
+
+# Add your user to the gpio group (replace with your username)
+sudo usermod -aG gpio $(whoami)
+
+# Create a udev rule
+sudo nano /etc/udev/rules.d/99-gpio.rules
+```
+
+Add this line to the file:
+```
+SUBSYSTEM=="gpio", KERNEL=="gpiochip*", GROUP="gpio", MODE="0660"
+```
+
+Save and exit, then reload udev rules:
+```bash
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+**Important:** Log out and log back in (or reboot) for the group membership to take effect.
+
+Verify the permissions are correct:
+```bash
+ls -l /dev/gpiochip*
+# Should show: crw-rw---- root gpio /dev/gpiochip0
+```
+
+5. Clone and build the source code.
 
 ```bash
 git clone git@github.com:LeandroSQ/klipper-buzzer.git ~/buzzer
@@ -40,7 +74,7 @@ chmod +x ./tools/build.sh
 ./tools/build.sh
 ```
 
-5. Add the following to your `printer.cfg` file.
+6. Add the following to your `printer.cfg` file.
 
 ```yaml
 [gcode_shell_command PLAY_TUNE]
@@ -53,7 +87,7 @@ gcode:
     RUN_SHELL_COMMAND CMD=PLAY_TUNE
 ```
 
-6. **(EXTRA)** You can also specify a file to be played instead of randomly picking one:
+7. **(EXTRA)** You can also specify a file to be played instead of randomly picking one:
 ```yaml
 [gcode_shell_command PLAY_ONE_PIECE]
 command: /home/$(whoami)/buzzer/buzzer "songs/one piece - we are.txt" &
@@ -65,7 +99,7 @@ gcode:
     RUN_SHELL_COMMAND CMD=PLAY_ONE_PIECE
 ```
 
-7. **(EXTRA)** You can append your newly added GCODE Macro at the end of the machine GCODE on your slicer. So everytime a print is finished it will play your tunes.
+8. **(EXTRA)** You can append your newly added GCODE Macro at the end of the machine GCODE on your slicer. So everytime a print is finished it will play your tunes.
 ![image](https://github.com/user-attachments/assets/ee4f7bb0-3a61-4916-9351-c6b456767cfc)
 
 
