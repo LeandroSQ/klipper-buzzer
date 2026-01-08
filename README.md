@@ -27,6 +27,7 @@ wget http://abyz.me.uk/lg/lg.zip -O /tmp/lg.zip
 unzip /tmp/lg.zip -d include
 cd include
 make
+cd include/lg
 sudo make install
 ```
 
@@ -34,6 +35,7 @@ sudo make install
 
 ```bash
 git clone git@github.com:LeandroSQ/klipper-buzzer.git ~/buzzer
+cd ./buzzer
 chmod +x ./tools/build.sh
 ./tools/build.sh
 ```
