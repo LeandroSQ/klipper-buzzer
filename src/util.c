@@ -37,7 +37,7 @@ void check_gpio_device_error(int chip_id) {
             print_error("Failed to open GPIO chip: Permission denied\n");
             print_error("The GPIO device %s exists but you don't have permission to access it.\n\n", gpio_device);
             print_error("Please refer to the README.md for GPIO permission setup instructions,\n");
-            print_error("or run this program with sudo (not recommended for production).\n");
+            print_error("or run this program with sudo (not recommended).\n");
         } else {
             // Device exists and permissions are OK, but still failed to open
             // This could be due to device being in use, driver issues, etc.
