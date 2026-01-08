@@ -36,9 +36,16 @@ void check_gpio_device_error(int chip_id) {
         if (access(gpio_device, R_OK | W_OK) != 0) {
             print_error("Failed to open GPIO chip: Permission denied\n");
             print_error("The GPIO device %s exists but you don't have permission to access it.\n", gpio_device);
-            print_error("Try running with sudo or add your user to the 'gpio' group:\n");
-            print_error("  sudo usermod -aG gpio <your-username>\n");
-            print_error("Then log out and log back in for the changes to take effect.\n");
+            print_error("\n");
+            print_error("To fix this, you need to configure GPIO permissions:\n");
+            print_error("1. Create a gpio group: sudo groupadd gpio\n");
+            print_error("2. Add your user to it: sudo usermod -aG gpio <your-username>\n");
+            print_error("3. Create udev rule: sudo nano /etc/udev/rules.d/99-gpio.rules\n");
+            print_error("   Add this line: SUBSYSTEM==\"gpio\", KERNEL==\"gpiochip*\", GROUP=\"gpio\", MODE=\"0660\"\n");
+            print_error("4. Reload udev: sudo udevadm control --reload-rules && sudo udevadm trigger\n");
+            print_error("5. Reboot or log out and back in\n");
+            print_error("\n");
+            print_error("Alternatively, run this program with sudo (not recommended for production).\n");
         } else {
             // Device exists and permissions are OK, but still failed to open
             // This could be due to device being in use, driver issues, etc.
