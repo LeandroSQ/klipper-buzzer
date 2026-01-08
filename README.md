@@ -130,6 +130,8 @@ This repository includes ready-to-play sound files in two directories:
   - shakira - hips dont lie.txt
   - sword art online - crossing fields.txt
   - top gear.txt
+  - baroes da pisadinha - ja que me ensinou a beber.txt
+  - one piece - memories.txt
 
 - **`./alerts`** - Contains short alert sounds for system events:
   - boot.txt (Windows XP boot sound)
