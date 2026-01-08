@@ -17,6 +17,7 @@
 const uint8_t GPIO_PIN = 64;
 const uint8_t GPIO_CHIP = 0;
 const char* SONGS_FOLDER = __FILE__ "/songs";
+const int GPIO_DEVICE_PATH_SIZE = 32;
 
 int main(int argc, char **argv) {
     // Arguments:
@@ -40,9 +41,10 @@ int main(int argc, char **argv) {
     }
 
     if (filename == NULL || isDirectory) {
-        filename = (char*)getRandomFileInFolder(isDirectory ? filename : SONGS_FOLDER);
+        const char* folder = isDirectory ? filename : SONGS_FOLDER;
+        filename = (char*)getRandomFileInFolder(folder);
         if (filename == NULL) {
-            print_error("Failed to get random file in folder %s\n", isDirectory ? filename : SONGS_FOLDER);
+            print_error("Failed to get random file in folder %s\n", folder);
             return 1;
         }
 
@@ -60,13 +62,14 @@ int main(int argc, char **argv) {
     }
 
 	int handle = lgGpiochipOpen(GPIO_CHIP);
+	// lgGpiochipOpen returns a handle >= 0 on success, or a negative error code on failure
 	if (handle < 0) {
         free(filename);
         free(melody->tones);
         free(melody);
         
         // Check if the GPIO device exists but we don't have permission
-        char gpio_device[32];
+        char gpio_device[GPIO_DEVICE_PATH_SIZE];
         snprintf(gpio_device, sizeof(gpio_device), "/dev/gpiochip%d", GPIO_CHIP);
         
         if (access(gpio_device, F_OK) == 0) {
