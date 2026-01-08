@@ -4,8 +4,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <math.h>
-#include <unistd.h>
-#include <errno.h>
 #include "util.h"
 #include "parser.h"
 #ifdef  __APPLE__
@@ -17,7 +15,6 @@
 const uint8_t GPIO_PIN = 64;
 const uint8_t GPIO_CHIP = 0;
 const char* SONGS_FOLDER = __FILE__ "/songs";
-const int GPIO_DEVICE_PATH_SIZE = 32;
 
 int main(int argc, char **argv) {
     // Arguments:
@@ -68,24 +65,7 @@ int main(int argc, char **argv) {
         free(melody->tones);
         free(melody);
         
-        // Check if the GPIO device exists but we don't have permission
-        char gpio_device[GPIO_DEVICE_PATH_SIZE];
-        snprintf(gpio_device, sizeof(gpio_device), "/dev/gpiochip%d", GPIO_CHIP);
-        
-        if (access(gpio_device, F_OK) == 0) {
-            // Device exists, check if it's a permission issue
-            if (access(gpio_device, R_OK | W_OK) != 0) {
-                print_error("Failed to open GPIO chip: Permission denied\n");
-                print_error("The GPIO device %s exists but you don't have permission to access it.\n", gpio_device);
-                print_error("Try running with sudo or add your user to the 'gpio' group:\n");
-                print_error("  sudo usermod -aG gpio $USER\n");
-                print_error("Then log out and log back in for the changes to take effect.\n");
-            } else {
-                print_error("Failed to open GPIO chip (error code: %d)\n", handle);
-            }
-        } else {
-            print_error("Failed to open GPIO chip: Device %s not found\n", gpio_device);
-        }
+        check_gpio_device_error(GPIO_CHIP);
 		return 1;
 	} else {
         print("Opened GPIO chip!\n");
