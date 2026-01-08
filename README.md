@@ -80,6 +80,31 @@ gcode:
 4. Save it as a `.txt` file in the `songs` folder.
 5. **(Extra)** If not sounding as expected, you can change the number on the first line of your `.txt` to shift the pitch, in semitones. Usually with passive buzzers the higher the better! Try 6, 12, 18 and 24 and see what sounds best.
 
+### Pre-shipped Sounds
+
+This repository includes ready-to-play sound files in two directories:
+
+- **`./songs`** - Contains various songs and melodies:
+  - brazil.txt
+  - fairy tail.txt
+  - feliz navidad.txt
+  - mario - game over.txt
+  - mario - win.txt
+  - megalovania.txt
+  - naruto - silhouette.txt
+  - neon genesis evangelion - cruel angel's thesis.txt
+  - one piece - we are.txt
+  - shakira - hips dont lie.txt
+  - sword art online - crossing fields.txt
+  - top gear.txt
+
+- **`./alerts`** - Contains short alert sounds for system events:
+  - boot.txt (Windows XP boot sound)
+  - error.txt
+  - success.txt
+
+You can play any of these files by specifying their path when running the buzzer command.
+
 ### Usage
 
 You can play a song by running the following command:
