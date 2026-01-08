@@ -40,7 +40,7 @@ To allow the program to access GPIO devices without running as root, you need to
 sudo groupadd gpio
 
 # Add your user to the gpio group (replace with your username)
-sudo usermod -aG gpio $USER
+sudo usermod -aG gpio $(whoami)
 
 # Create a udev rule
 sudo nano /etc/udev/rules.d/99-gpio.rules
