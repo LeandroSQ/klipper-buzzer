@@ -25,9 +25,8 @@ sudo apt install swig -y
 cd src
 wget http://abyz.me.uk/lg/lg.zip -O /tmp/lg.zip
 unzip /tmp/lg.zip -d include
-cd include
-make
 cd include/lg
+make
 sudo make install
 ```
 
