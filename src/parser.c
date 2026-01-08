@@ -7,7 +7,7 @@ const char* getRandomFileInFolder(const char* path) {
     // Get all .txt files in a given folder
     DIR *folder = opendir(path);
     if (folder == NULL) {
-        print("Failed to open folder: %s\n", path);
+        print_error("Failed to open folder: %s\n", path);
         return NULL;
     }
 
@@ -24,7 +24,7 @@ const char* getRandomFileInFolder(const char* path) {
         if (dot && strcmp(dot, ".txt") != 0) continue;
 
         if (count >= MAX_FILES) {
-            print("Too many files in folder: %s\n", path);
+            print_error("Too many files in folder: %s\n", path);
             break;
         }
 
@@ -34,7 +34,7 @@ const char* getRandomFileInFolder(const char* path) {
     closedir(folder);
 
     if (count == 0) {
-        print("No files found in folder: %s\n", path);
+        print_error("No files found in folder: %s\n", path);
         return NULL;
     }
 
@@ -61,7 +61,7 @@ const char* getRandomFileInFolder(const char* path) {
 Melody* parseMelodyFile(const char* path) {
     FILE* file = fopen(path, "r");
     if (file == NULL) {
-        print("Failed to open file: %s\n", path);
+        print_error("Failed to open file: %s\n", path);
         return NULL;
     }
 
@@ -81,7 +81,7 @@ Melody* parseMelodyFile(const char* path) {
                 print("Parsed pitch: %d\n", pitch);
                 isFirstLine = false;
             } else {
-                print("Invalid first line: %s\n", line);
+                print_error("Invalid first line: %s\n", line);
                 freeVector(tones);
                 free(line);
                 fclose(file);
@@ -91,14 +91,14 @@ Melody* parseMelodyFile(const char* path) {
             print("Parsed tone: %d %d\n", a, b);
             Tone tone = { a, b };
             if (!vectorAppend(tones, &tone)) {  // Assuming vectorAppend returns success/failure
-                print("Failed to append tone\n");
+                print_error("Failed to append tone\n");
                 free(line);
                 freeVector(tones);
                 fclose(file);
                 return NULL;
             }
         } else {
-            print("Invalid line: %s\n", line);
+            print_error("Invalid line: %s\n", line);
             freeVector(tones);
             free(line);
             fclose(file);

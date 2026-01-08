@@ -4,6 +4,8 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <math.h>
+#include <unistd.h>
+#include <errno.h>
 #include "util.h"
 #include "parser.h"
 #ifdef  __APPLE__
@@ -20,7 +22,7 @@ int main(int argc, char **argv) {
     // Arguments:
     // <filename> or none
     if (argc > 2) {
-        print("Usage: %s [filename]\n", argv[0]);
+        print_error("Usage: %s [filename]\n", argv[0]);
         return 1;
     }
 
@@ -40,7 +42,7 @@ int main(int argc, char **argv) {
     if (filename == NULL || isDirectory) {
         filename = (char*)getRandomFileInFolder(isDirectory ? filename : SONGS_FOLDER);
         if (filename == NULL) {
-            print("Failed to get random file in folder %s\n", isDirectory ? filename : SONGS_FOLDER);
+            print_error("Failed to get random file in folder %s\n", isDirectory ? filename : SONGS_FOLDER);
             return 1;
         }
 
@@ -52,24 +54,42 @@ int main(int argc, char **argv) {
     // Parse the melody
     Melody* melody = parseMelodyFile(filename);
     if (melody == NULL) {
-        print("Failed to parse melody\n");
+        print_error("Failed to parse melody\n");
         free(filename);
         return 1;
     }
 
 	int handle = lgGpiochipOpen(GPIO_CHIP);
-	if (handle != LG_OKAY) {
+	if (handle < 0) {
         free(filename);
         free(melody->tones);
         free(melody);
-		print("Failed to open GPIO chip\n");
+        
+        // Check if the GPIO device exists but we don't have permission
+        char gpio_device[32];
+        snprintf(gpio_device, sizeof(gpio_device), "/dev/gpiochip%d", GPIO_CHIP);
+        
+        if (access(gpio_device, F_OK) == 0) {
+            // Device exists, check if it's a permission issue
+            if (access(gpio_device, R_OK | W_OK) != 0) {
+                print_error("Failed to open GPIO chip: Permission denied\n");
+                print_error("The GPIO device %s exists but you don't have permission to access it.\n", gpio_device);
+                print_error("Try running with sudo or add your user to the 'gpio' group:\n");
+                print_error("  sudo usermod -aG gpio $USER\n");
+                print_error("Then log out and log back in for the changes to take effect.\n");
+            } else {
+                print_error("Failed to open GPIO chip (error code: %d)\n", handle);
+            }
+        } else {
+            print_error("Failed to open GPIO chip: Device %s not found\n", gpio_device);
+        }
 		return 1;
 	} else {
         print("Opened GPIO chip!\n");
     }
 
     if (lgGpioClaimOutput(handle, 0, GPIO_PIN, 0) != LG_OKAY) {
-        print("Failed to claim GPIO\n");
+        print_error("Failed to claim GPIO\n");
     } else {
         print("Claimed GPIO!\n");
 
@@ -97,7 +117,7 @@ int main(int argc, char **argv) {
             const float pwmCycles = durationInSeconds / period;
 
             if (lgTxPwm(handle, GPIO_PIN, frequency, dutyCycle, pwmOffset, pwmCycles) < 0) {
-                print("Failed to transmit PWM\n");
+                print_error("Failed to transmit PWM\n");
             } else {
                 print("Transmitted PWM!\n");
                 while(lgTxBusy(handle, GPIO_PIN, LG_TX_PWM)) {
@@ -112,7 +132,7 @@ int main(int argc, char **argv) {
         free(filename);
         free(melody->tones);
         free(melody);
-		print("Failed to close GPIO chip\n");
+		print_error("Failed to close GPIO chip\n");
 		return 1;
     }
 
