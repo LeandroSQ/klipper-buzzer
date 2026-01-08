@@ -4,6 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Include lgpio header for error constants
+#ifdef  __APPLE__
+    #include "include/lgpio.h"
+#else
+    #include <lgpio.h>
+#endif
+
 #define GPIO_DEVICE_PATH_SIZE 32
 
 void print(const char* msg, ...) {
@@ -31,25 +38,25 @@ void check_gpio_device_error(int chip_id, int error_code) {
         return;
     }
     
-    // Check lgpio-specific error codes
+    // Check lgpio-specific error codes using defined constants
     // error_code from lgGpiochipOpen is already negative
-    if (error_code == -93) {  // LG_NO_PERMISSIONS
+    if (error_code == LG_NO_PERMISSIONS) {
         print_error("Failed to open GPIO chip: Permission denied\n");
         print_error("The GPIO device %s exists but you don't have permission to access it.\n\n", gpio_device);
         print_error("Please refer to the README.md for GPIO permission setup instructions,\n");
         print_error("or run this program with sudo (not recommended).\n");
-    } else if (error_code == -79) {  // LG_GPIO_BUSY
+    } else if (error_code == LG_GPIO_BUSY) {
         print_error("Failed to open GPIO chip: Device or resource busy\n");
         print_error("The GPIO device %s is already in use by another process.\n", gpio_device);
         print_error("Try closing other programs that may be using GPIO, or check for background services.\n");
-    } else if (error_code == -78) {  // LG_CANNOT_OPEN_CHIP
+    } else if (error_code == LG_CANNOT_OPEN_CHIP) {
         print_error("Failed to open GPIO chip: Cannot open gpiochip\n");
         print_error("Unable to open %s. Check if the device exists and you have proper permissions.\n", gpio_device);
         print_error("Refer to README.md for GPIO permission setup instructions.\n");
-    } else if (error_code == -89) {  // LG_BAD_GPIOCHIP
+    } else if (error_code == LG_BAD_GPIOCHIP) {
         print_error("Failed to open GPIO chip: Bad gpiochip\n");
         print_error("The chip number %d is invalid or out of range.\n", chip_id);
-    } else if (error_code == -81) {  // LG_NOT_A_GPIOCHIP
+    } else if (error_code == LG_NOT_A_GPIOCHIP) {
         print_error("Failed to open GPIO chip: Not a gpiochip\n");
         print_error("The device %s is not a valid GPIO chip.\n", gpio_device);
     } else {
