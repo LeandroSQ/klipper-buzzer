@@ -31,35 +31,31 @@ void check_gpio_device_error(int chip_id, int error_code) {
         return;
     }
     
-    // The error_code from lgGpiochipOpen is a negative errno value
-    // Convert to positive for comparison with standard errno values
-    int actual_errno = -error_code;
-    
-    // Check common error codes returned by lgGpiochipOpen
-    if (actual_errno == 13) {  // EACCES - Permission denied
+    // Check lgpio-specific error codes
+    // error_code from lgGpiochipOpen is already negative
+    if (error_code == -93) {  // LG_NO_PERMISSIONS
         print_error("Failed to open GPIO chip: Permission denied\n");
         print_error("The GPIO device %s exists but you don't have permission to access it.\n\n", gpio_device);
         print_error("Please refer to the README.md for GPIO permission setup instructions,\n");
         print_error("or run this program with sudo (not recommended).\n");
-    } else if (actual_errno == 16) {  // EBUSY - Device busy
+    } else if (error_code == -79) {  // LG_GPIO_BUSY
         print_error("Failed to open GPIO chip: Device or resource busy\n");
         print_error("The GPIO device %s is already in use by another process.\n", gpio_device);
         print_error("Try closing other programs that may be using GPIO, or check for background services.\n");
-    } else if (actual_errno == 2) {  // ENOENT - No such file or directory
-        print_error("Failed to open GPIO chip: Device %s not found\n", gpio_device);
-        print_error("Make sure the GPIO chip exists and the chip number is correct.\n");
-    } else if (actual_errno == 19) {  // ENODEV - No such device
-        print_error("Failed to open GPIO chip: No such device\n");
-        print_error("The GPIO device %s does not exist or the driver is not loaded.\n", gpio_device);
+    } else if (error_code == -78) {  // LG_CANNOT_OPEN_CHIP
+        print_error("Failed to open GPIO chip: Cannot open gpiochip\n");
+        print_error("Unable to open %s. Check if the device exists and you have proper permissions.\n", gpio_device);
+        print_error("Refer to README.md for GPIO permission setup instructions.\n");
+    } else if (error_code == -89) {  // LG_BAD_GPIOCHIP
+        print_error("Failed to open GPIO chip: Bad gpiochip\n");
+        print_error("The chip number %d is invalid or out of range.\n", chip_id);
+    } else if (error_code == -81) {  // LG_NOT_A_GPIOCHIP
+        print_error("Failed to open GPIO chip: Not a gpiochip\n");
+        print_error("The device %s is not a valid GPIO chip.\n", gpio_device);
     } else {
-        // Fall back to access() checks for unknown errors
-        if (access(gpio_device, F_OK) == 0) {
-            // Device exists but we got an unexpected error
-            print_error("Failed to open GPIO chip: Error code %d\n", actual_errno);
-            print_error("The GPIO device %s exists but failed to open.\n", gpio_device);
-            print_error("This may indicate a driver issue or incompatible hardware state.\n");
-        } else {
-            print_error("Failed to open GPIO chip: Device %s not found\n", gpio_device);
-        }
+        // Unknown lgpio error code
+        print_error("Failed to open GPIO chip: Error code %d\n", error_code);
+        print_error("Unable to open %s.\n", gpio_device);
+        print_error("Refer to lgpio documentation for error code details.\n");
     }
 }
