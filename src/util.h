@@ -5,6 +5,6 @@
 
 void print(const char* msg, ...);
 void print_error(const char* msg, ...);
-void check_gpio_device_error(int chip_id);
+void check_gpio_device_error(int chip_id, int error_code);
 
 #endif

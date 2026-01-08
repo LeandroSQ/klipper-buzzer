@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
         free(melody->tones);
         free(melody);
         
-        check_gpio_device_error(GPIO_CHIP);
+        check_gpio_device_error(GPIO_CHIP, handle);
 		return 1;
 	} else {
         print("Opened GPIO chip!\n");
